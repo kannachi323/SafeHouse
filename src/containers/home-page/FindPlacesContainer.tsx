@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import BKG1 from "@public/images/bkg1.jpg"
 import RENT1 from "@public/images/rent1.jpg";
@@ -7,9 +8,22 @@ import Dropdown from "@components/Dropdown"
 import SearchBar from "@components/SearchBar"
 import { CiLocationOn } from "react-icons/ci";
 
-
+import React, {useState} from "react";
 
 export default function FindPlacesContainer() {
+  const [query, setQuery] = useState('');
+  const [cities, setCities] = useState<string[]>([]);
+
+  const handleSearch = async () => {
+    const response = await fetch(`/api/location?loc=${query}`);
+    if (!response.ok) {
+      console.error('Failed to fetch location:', response.statusText);
+      return;
+    }
+    const data = await response.json();
+    setCities(data.cities);
+  }
+
   return (
     <div className="flex flex-row justify-between items-center bg-blue-500 relative h-[45vh] w-full text-3xl"
       style={{
@@ -28,8 +42,11 @@ export default function FindPlacesContainer() {
       <div className="flex flex-col justify-center items-center m-20 w-1/2">
         <b className="text-white text-xl pr-12">Find a specific location</b>
         <SearchBar
+          onInputChange={(e) => setQuery(e.target.value)}
           children={
-            <CiLocationOn className="text-4xl text-white hover:text-[#d4d2d2] cursor-pointer"/>
+            <button onClick={handleSearch}>
+              <CiLocationOn className="text-4xl text-white hover:text-[#d4d2d2] cursor-pointer"/>
+            </button>
           } 
         />
       </div>
