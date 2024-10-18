@@ -12,16 +12,17 @@ import React, {useState} from "react";
 
 export default function FindPlacesContainer() {
   const [query, setQuery] = useState('');
-  const [cities, setCities] = useState<string[]>([]);
+  const [loc, setLoc] = useState<string[]>([]);
 
   const handleSearch = async () => {
     const response = await fetch(`/api/location?loc=${query}`);
+    
     if (!response.ok) {
       console.error('Failed to fetch location:', response.statusText);
       return;
     }
     const data = await response.json();
-    setCities(data.cities);
+    setLoc(data.location);
   }
 
   return (
@@ -49,6 +50,16 @@ export default function FindPlacesContainer() {
             </button>
           } 
         />
+
+        {loc.length > 0 && (
+          <div className="mt-4 text-white">
+            <ul>
+              {loc.map((ll, index) => (
+                <li key={index}>{ll}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       
     </div>
